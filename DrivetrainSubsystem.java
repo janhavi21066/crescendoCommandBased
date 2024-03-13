@@ -51,38 +51,46 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final WPI_TalonSRX left2 = new WPI_TalonSRX(6);
     private final static WPI_TalonSRX right1 = new WPI_TalonSRX(5);
     private final WPI_TalonSRX right2 = new WPI_TalonSRX(8);
+  
     private final DifferentialDrive Robotdrivetrain = new DifferentialDrive(left1, right1);
-    private static final double rotationsToFeet = (1.0 / 4096 * 6 * Math.PI / 12)/3.281;
-    //private final PIDController drivetrainPIDController = new PIDController(0.5, 0.5, 0.5);
     public DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.55);
+  
+    private static final double rotationsToMeters = (1.0 / 4096 * 6 * Math.PI / 12)/3.281;
+    //private final PIDController drivetrainPIDController = new PIDController(0.5, 0.5, 0.5);
     double distanceCovered = 0;
     double leftspeed = 0;
     double rightspeed = 0;
     double startTime = 0;
+  
     ChassisSpeeds chassisSpeedsSupplier;
     static Pose2d currentRobotPose;
     double linearVelocity;
     double headingValue;
-    public ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
-    static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+  
+    private final static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
     private final Field2d m_field = new Field2d();
+
+    
     private static Encoder leftEncoder = new Encoder(1, 2, false, EncodingType.k4X);
     private static Encoder rightEncoder = new Encoder(3, 4, true, EncodingType.k4X);
-    static double LeftDistance = -(left1.getSelectedSensorPosition() * rotationsToFeet);
-    static double RightDistance = right1.getSelectedSensorPosition() * rotationsToFeet;
+  
+    static double LeftDistance = -(left1.getSelectedSensorPosition() * rotationsToMeters);
+    static double RightDistance = right1.getSelectedSensorPosition() * rotationsToMeters;
+  
     private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), LeftDistance, RightDistance);
-    boolean isFirstPath = true;
-    //public PathPlannerTrajectory traj = new PathPlannerTrajectory(null, chassisSpeeds, null);
 
-
+  
 public void drivetrain() {
   left2.follow(left1);
   right2.follow(right1);
+  
   right2.setInverted(InvertType.FollowMaster);
   left2.setInverted(InvertType.FollowMaster);
+  
   EncoderInitReset();
   //gyro.calibrate();
   resetGyro();
+  
   AutoBuilder.configureRamsete(
     this::getPose, // Robot pose supplier
     this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
@@ -103,6 +111,7 @@ public void drivetrain() {
     },
   this // Reference to this subsystem to set requirements
   );
+  
   SmartDashboard.putData("Field", m_field);
   PathPlannerLogging.setLogActivePathCallback((poses) -> m_field.getObject("path").setPoses(poses));
   }
@@ -111,17 +120,19 @@ public void drivetrain() {
   public void periodic() {
     // This method will be called once per scheduler run
     Rotation2d gryoAngle = gyro.getRotation2d();
-    LeftDistance = -(left1.getSelectedSensorPosition() * rotationsToFeet);
-    RightDistance = right1.getSelectedSensorPosition() * rotationsToFeet;
+    
+    LeftDistance = -(left1.getSelectedSensorPosition() * rotationsToMeters);
+    RightDistance = right1.getSelectedSensorPosition() * rotationsToMeters;
+    
     odometry.update(gryoAngle, LeftDistance, RightDistance);
     distanceCovered = (LeftDistance + RightDistance) / 2;
     m_field.setRobotPose(getPose());
+    
     SmartDashboard.putNumber("Distance Covered", getEncoderDistance());
     SmartDashboard.putNumber("Left Distance in meters", LeftDistance);
     SmartDashboard.putNumber("RightDrivetrainDistanceTravelled", RightDistance);
     SmartDashboard.putNumber("Heading of the robot", getHeading());
     SmartDashboard.putNumber("Heading of the robot", getPoseHeading());
-    SmartDashboard.putNumber("Unbounded Heading", getUnboundedHeading());
     SmartDashboard.putData("Field", m_field);
   }
 
@@ -130,28 +141,34 @@ public void drivetrain() {
     // This method will be called once per scheduler run during simulation
     }
 
+    // driving the robot  
     public void Tankdrive(double leftspeed, double rightspeed) {
       Robotdrivetrain.tankDrive(leftspeed, rightspeed);
     }
 
+    // rotation of the robot in degrees
     public double getHeading(){
       headingValue = gyro.getAngle();
       return Math.IEEEremainder(headingValue, 360);
     }
 
+    // rotation of the robot  
     public double getUnboundedHeading(){
-    return gyro.getAngle();
+      return gyro.getAngle();
     }
 
+    // for PathPlanner  
     public Pose2d getPose() {
       return odometry.getPoseMeters();
     }
 
+      
     public double getPoseHeading(){
       return odometry.getPoseMeters().getRotation().getDegrees();
     }
 
-    public void resetPose(Pose2d pose) {
+  // for PathPlanner  
+  public void resetPose(Pose2d pose) {
       EncoderInitReset();
       odometry.resetPosition(gyro.getRotation2d(), LeftDistance, RightDistance, pose);
     }
@@ -167,7 +184,6 @@ public void drivetrain() {
         //double linearVelocity = chassisSpeedsSupplier.vxMetersPerSecond;
         //double angularVelocity = chassisSpeedsSupplier.omegaRadiansPerSecond;
         return chassisSpeedsSupplier;
-        //return kinematics.toChassisSpeeds(null);
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
@@ -178,7 +194,6 @@ public void drivetrain() {
 
     // outputting speeds to the robot
     public void driveRobotRelative(ChassisSpeeds chassisSpeeds){
-
       DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
       DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(chassisSpeeds);
       double leftVelocity = wheelSpeeds.leftMetersPerSecond;
@@ -187,16 +202,18 @@ public void drivetrain() {
     }
 
     public static double getEncoderDistance(){
-    return ((LeftDistance+RightDistance))/2;
+    return (LeftDistance+RightDistance)/2;
   }
 
+  // encoder initialization and/or reset
   public void EncoderInitReset(){
     left1.setSelectedSensorPosition(0, 0, 10);
     right1.setSelectedSensorPosition(0, 0, 10);
     rightEncoder.reset();
     leftEncoder.reset();
   }
-public Command resetPathPlannerPose(boolean isFirstPathAuto) {
+  
+/*public Command resetPathPlannerPose(boolean isFirstPathAuto) {
   isFirstPath = isFirstPathAuto;
     return new SequentialCommandGroup(
         new InstantCommand(() -> {
@@ -206,5 +223,5 @@ public Command resetPathPlannerPose(boolean isFirstPathAuto) {
               isFirstPath = false;
           }
         }));
-}
+}*/
 }
