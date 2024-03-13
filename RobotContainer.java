@@ -144,6 +144,7 @@ public class RobotContainer {
     // inverse intake and outtake motors to remove the note incase it gets stuck.
     aButton.whileTrue(new inverseIntake(intakeOuttake));
 
+    // drive straight testing button (drivetrain drifts to the right if both left and right speeds are same)
     xButton.whileTrue(new driveRobotCommand(m_Drivetrain, 0.45, -0.5));
   }
 
@@ -154,18 +155,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //PathPlannerPath path = PathPlannerPath.fromPathFile("note1");
-    //return AutoBuilder.followPath(path);
-    //return new PathPlannerAuto("3noteAuto");
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        m_Drivetrain.EncoderInitReset();
-        m_Drivetrain.resetGyro();
-        m_Drivetrain.resetPose(m_Drivetrain.getPose());
-      }, m_Drivetrain),autoChooser.getSelected());
-    /*m_Drivetrain.resetPose(m_Drivetrain.getPose());
+      m_Drivetrain.resetPose(m_Drivetrain.getPose());
       m_Drivetrain.EncoderInitReset();
       m_Drivetrain.resetGyro();
-    return autoChooser.getSelected();*/
+    return autoChooser.getSelected();
   }
 }
