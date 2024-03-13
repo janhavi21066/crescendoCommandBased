@@ -45,6 +45,7 @@ public class Arm extends SubsystemBase {
     motor1.set(speed);
   }
 
+  // trying to use encoders to set arm to outtake position (130 degrees). does not work, needs troubleshooting.
   /*public void setArmPosition(double pos){
     if (pos<armPositionDegrees())
     {
