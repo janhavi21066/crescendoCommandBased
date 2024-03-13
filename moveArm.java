@@ -1,3 +1,4 @@
+// trying to use encoders to set position of the arm. the code does not work and needs troubleshooting.
 /*package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
