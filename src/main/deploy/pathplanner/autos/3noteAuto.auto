@@ -1,0 +1,123 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "note1amp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from intake to outtake position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Out take motors on"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from outtake to intake position"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "note2Pickup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake motors on"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "note2amp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from intake to outtake position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Out take motors on"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from outtake to intake position"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "note3Pickup"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake motors on"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "note3Amp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from intake to outtake position"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Out take motors on"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Move arm from outtake to intake position"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
