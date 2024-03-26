@@ -221,7 +221,7 @@ public class RobotContainer {
     bButtonClimberController.whileTrue(new lowerClimber(climber));
 
     // raise climber
-    xButtonClimberController.whileTrue(new raiseClimber(climber));
+    aButtonClimberController.whileTrue(new raiseClimber(climber));
 
     // climb
     yButtonClimberController.whileTrue(new climb(climber));
